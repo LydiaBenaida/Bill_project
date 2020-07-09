@@ -1,0 +1,22 @@
+{% extends 'bill/base.html' %}
+{% block content %}
+
+   {% load bootstrap4 django_tables2 %}
+         <div class="container">
+          <div class="card">
+            {% for message in messages %}
+
+                    <div class="alert alert-success" role="alert">
+                       <strong>{{ message }}</strong>
+                    </div>
+                 {% endfor %}
+
+            <h2>La liste :</h2>
+
+          <br><br>
+          <div class="col-lg-12">  {% render_table table %}
+          </div>
+          </div>
+
+         </div>
+{% endblock %}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+     <head>
+        <meta charset="utf-8">
+        {% load static %}
+
+        {% load bootstrap4 django_tables2 %}
+        {% bootstrap_css %}         {# Embed Bootstrap CSS #}
+        {% bootstrap_javascript jquery='full' %}  {# Embed Bootstrap JS+jQuery #}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="{% static '/main.css' %}">
+            <script type="text/javascript" >var user='{{ request.user }}'
+     function getCookie(name) {
+             let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+const csrftoken = getCookie('csrftoken');
+     </script>
+      </head>
+
+           <header >
+                {% block navbar %}
+                {% include  './navbar.html' %}
+                {% endblock %}
+                <img src="{% static 'img/money.jpg' %}" style="width: 100%" alt="hih">
+           </header>
+
+        <div class="row">
+
+		<div id="sidebar-wrapper" class="col-lg-2">
+			<div id="sidebar">
+			{% block sidebar %}
+				{% include  './sidebar.html' %}
+        	{% endblock %}
+       		</div>
+       	</div>
+        <section class="col-lg-10 pull-right">
+			{% if messages %}
+				{% for message in messages %}
+					<div class="alert alert-{{message.tags}}">
+  						<strong>{{ message }}</strong>
+					</div>
+				{% endfor %}
+			{% endif %}
+          {% if user.is_authenticated %}
+			{% block content %}
+
+			{% endblock %}
+          {% else %}
+
+          {% endif %}
+        </section>
+	</div>
+    <br><br><br><br>
+                <br><br><br>
+
+            <body >
+               <div class="row">
+                    <div class="col-12">
+
+                     </div>
+               </div>
+            </body>
+
+             <footer class="row"><small><small>
+		<div class="fixed-bottom text-center text-white bg-dark col-lg-12">
+          <address>
+          	  	<strong>Entreprise de Vente En-ligne de Produits IT</strong><br>
+				BP 68M, 16270, Oued Smar, Algérie. Tél : 023 93 91 32; Fax : 023 93 91 42 ;
+          </address>
+        </div>
+	</small></small></footer>
+ <script type="text/javascript" src="{% static 'js/cart.js ' %}"></script>
+</html>

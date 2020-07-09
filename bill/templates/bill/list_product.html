@@ -1,0 +1,21 @@
+{% extends 'bill/base.html' %}
+{% block content %}
+
+   {% load bootstrap4 django_tables2 %}
+         <div class="container">
+
+          <div class="card">
+
+                <h4>Add product:</h4>
+              <br/>
+              <a href="{% url 'product-create' %}" class="btn btn-success" style="width: 20%">Add product</a>
+                <br>
+            <h2>La liste :</h2>
+
+          <br><br>
+          <div class="col-lg-12">  {% render_table table %}
+          </div>
+          </div>
+
+         </div>
+{% endblock %}

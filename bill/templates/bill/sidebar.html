@@ -1,0 +1,56 @@
+
+
+
+
+{% ifequal user.groups.all.0.name "client"%}
+      <ul class="nav list-group">
+          <li>
+                <a class="list-group-item" href="#">Nouvelle Facture</a>
+            </li>
+           <li>
+                <a class="list-group-item" href="{% url 'store' %}">Store</a>
+            </li>
+            <li>
+                <a class="list-group-item" href="#">Nouvelle ligne Facture</a>
+            </li>
+
+
+    </ul>
+
+ {% endifequal %}
+
+{% ifequal user.groups.all.0.name "fournisseur"%}
+      <ul class="nav list-group">
+          <li>
+                <a class="list-group-item" href="{% url 'category' %}">Category produit</a>
+            </li>
+           <li>
+                <a class="list-group-item" href="{% url 'produit' %}">produit</a>
+            </li>
+
+
+
+    </ul>
+
+ {% endifequal %}
+
+{% ifequal user.groups.all.0.name "admin"%}
+      <ul class="nav list-group">
+          <li>
+                <a class="list-group-item" href="{% url 'dashboard' %}">dashboard</a>
+            </li>
+           <li>
+                <a class="list-group-item" href="{% url 'client-list' %}">client</a>
+            </li>
+          <li>
+                <a class="list-group-item" href="{% url 'commande-list' %}">Commande</a>
+            </li>
+            <li>
+                <a class="list-group-item" href="{% url 'fournisseur-list' %}">fournisseur</a>
+            </li>
+      </ul>
+
+ {% endifequal %}
+
+
+
