@@ -1,4 +1,6 @@
 import json
+from pickle import GET
+from webbrowser import get
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -6,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, fields, F, ExpressionWrapper
 from django.http import JsonResponse, request
 from django.shortcuts import render
+
 from . import tables, charts
 # Create your views here.
 from django.urls import reverse
@@ -16,7 +19,7 @@ from crispy_forms.layout import Submit, HTML, Button
 from bill import models
 from bill.decorators import allowed_users
 from bill.models import Produit, Order, Client, OrderItem, Category, ProductTable, Fournisseur, LigneFournissTable, \
-    LigneClientTable, LigneCommandeTable
+    LigneClientTable, LigneCommandeTable, ProductCommandeTable, FactureTable
 from django_tables2.config import RequestConfig
 
 
@@ -45,6 +48,38 @@ def store(request):
     context = {'items':items,'products':products,'cartItems':cartItems}
     return render(request, 'bill/store.html', context)
 
+@allowed_users(allowed_roles=['client'])
+def SearchView(request):
+
+
+
+    if request.user.is_authenticated:
+        customer = request.user.client
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems=order.get_cart_items
+        try:
+            q = request.GET.get('q')
+        except:
+            q = None
+        if q:
+            products = Produit.objects.filter(designation__icontains=q)
+    else:
+        try:
+            q = request.GET.get('q')
+        except:
+            q = None
+        if q:
+            products = Produit.objects.filter(designation__icontains=q)
+
+
+
+        items = []
+        order = {'get_cart_items': 0, 'get_cart_total': 0}
+        cartItems=order['get_cart_items']
+
+    context = {'items':items,'products':products,'cartItems':cartItems}
+    return render(request, 'bill/store.html', context)
 
 @allowed_users(allowed_roles=['client'])
 def cart(request):
@@ -107,6 +142,7 @@ class LogoutView(TemplateView):
 
     return render(request, self.template_name)
 
+@allowed_users(allowed_roles=['fournisseur'])
 class CategoryCreateView(CreateView):
   model = Category
   template_name = 'bill/create.html'
@@ -123,7 +159,7 @@ class CategoryCreateView(CreateView):
   def get_success_url(self):
       return f"/category/"
 
-
+@allowed_users(allowed_roles=['fournisseur'])
 class ProductView(SingleTableView):
     template_name = 'bill/list_product.html'
     model = Produit
@@ -136,6 +172,7 @@ class ProductView(SingleTableView):
         context['table'] = table
         return context
 
+@allowed_users(allowed_roles=['fournisseur'])
 class ProductDeleteView(DeleteView):
     model = Produit
     template_name = 'bill/delete.html'
@@ -144,6 +181,7 @@ class ProductDeleteView(DeleteView):
     def get_success_url(self):
         return f"/produit/"
 
+@allowed_users(allowed_roles=['fournisseur'])
 class ProductCreate(CreateView):
     model = models.Produit
     fields = ["designation", "prix","fournisseur","category","image"]
@@ -158,6 +196,37 @@ class ProductCreate(CreateView):
         return f"/produit/"
 
 
+
+class ProductCommandeDelete(DeleteView):
+    model = Order
+    template_name = 'bill/delete.html'
+
+    def get_success_url(self):
+        return f"/produit/commande/"
+
+class ProductCommandeView(SingleTableView):
+    template_name = 'bill/list.html'
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductCommandeView, self).get_context_data(**kwargs)
+
+        table = ProductCommandeTable(Order.objects.filter(status=False))
+        RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
+        context['table'] = table
+        return context
+class FactureView(SingleTableView):
+    template_name = 'bill/list.html'
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super(FactureView, self).get_context_data(**kwargs)
+
+        table = FactureTable(Order.objects.filter(status=True))
+        RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
+        context['table'] = table
+        return context
+@allowed_users(allowed_roles=['admin'])
 
 class ClientDetailView(SingleTableView):
     template_name = 'bill/list.html'
@@ -174,6 +243,7 @@ class ClientDetailView(SingleTableView):
         return context
 
 
+@allowed_users(allowed_roles=['admin'])
 
 class ClientDeleteView(DeleteView):
     model = Client
@@ -183,6 +253,7 @@ class ClientDeleteView(DeleteView):
         return f"/clients/"
 
 
+@allowed_users(allowed_roles=['admin'])
 
 class FournisseurView(SingleTableView):
     template_name = 'bill/list.html'
@@ -195,6 +266,8 @@ class FournisseurView(SingleTableView):
         RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
         context['table'] = table
         return context
+@allowed_users(allowed_roles=['admin'])
+
 class FournisseurDeleteView(DeleteView):
     model = Fournisseur
     template_name = 'bill/delete.html'
@@ -202,6 +275,7 @@ class FournisseurDeleteView(DeleteView):
     def get_success_url(self):
         return f"fournisseur/"
 
+@allowed_users(allowed_roles=['admin'])
 
 class CommandeView(SingleTableView):
     template_name = 'bill/list.html'
@@ -214,6 +288,7 @@ class CommandeView(SingleTableView):
         RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
         context['table'] = table
         return context
+@allowed_users(allowed_roles=['admin'])
 
 def CommandeDelete(request,pk):
     order = Order.objects.get(id=pk)
@@ -223,6 +298,7 @@ def CommandeDelete(request,pk):
     context = {}
     return render(request, 'bill/base.html', context)
 
+@allowed_users(allowed_roles=['admin'])
 
 def CommandeValider(request,pk):
 
@@ -232,6 +308,8 @@ def CommandeValider(request,pk):
 
     context = {}
     return render(request, 'bill/base.html', context)
+@allowed_users(allowed_roles=['admin'])
+
 class DashboardView(TemplateView):
 
     template_name = "bill/dashboard.html"

@@ -121,8 +121,8 @@ class LigneClientTable(tables.Table):
         fields = ('nom','prenom', 'adresse', 'tel','chiffre_affaire')
 
 class LigneCommandeTable(tables.Table):
-    action = '<a href="{% url "commande-valider" pk=record.id  %}"    class ="btn btn-success  update-order" > valider </a>\
-    <a href= "{% url "commande-delete" pk=record.id  %}" class ="btn btn-danger update-order" > Supprimer </a> '
+    action = '<a href="{% url "commande-valider" pk=record.id  %}"    class ="btn btn-success  " > valider </a>\
+    <a href= "{% url "commande-delete" pk=record.id  %}" class ="btn btn-danger " > Supprimer </a> '
 
     edit = tables.TemplateColumn(action)
 
@@ -131,3 +131,23 @@ class LigneCommandeTable(tables.Table):
         model = Order
         template_name = "django_tables2/bootstrap4.html"
         fields = ('customer','complete','get_cart_items','get_cart_total')
+class ProductCommandeTable(tables.Table):
+    action = ' <a href= "{% url "commandeProduct-delete" pk=record.id  %}" class ="btn btn-danger " > Supprimer </a> '
+
+    edit = tables.TemplateColumn(action)
+
+
+    class Meta:
+        model = Order
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ('customer','status','get_cart_items','get_cart_total')
+class FactureTable(tables.Table):
+    action = ' <a href= "#" class ="btn btn-success " > Payer </a> '
+
+    edit = tables.TemplateColumn(action)
+
+
+    class Meta:
+        model = Order
+        template_name = "django_tables2/bootstrap4.html"
+        fields = ('customer','status','get_cart_items','get_cart_total')

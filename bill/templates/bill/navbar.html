@@ -1,38 +1,26 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand" href="{% url 'store' %}">Bill</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="#">Bill</a>
 
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="{% url 'store' %}">Store <span class="sr-only">(current)</span></a>
-              </li>
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li disabled>
+            <a class="nav-link disabled">Logged in as {{ user.username }}</a>
+        </li>
 
-            </ul>
-            <div class="form-inline my-2 my-lg-0">
-                <a href="#"class="btn btn-warning">Login</a>
+       <li  >
+        {% ifequal user.groups.all.0.name "client"%}
+            <form class="form-inline" action="{% url 'search' %}">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search a product" name="q" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+         {% endifequal %}
+       </li>
 
-                <a href="{% url 'cart' %}">
-                    <img  id="cart-icon" src="{% static 'images/cart.png' %}">
-                </a>
-                <p id="cart-total">{{ cartItems }}</p>
-
-            </div>
-          </div>
-        </nav>
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    </button>
-
-    <div class="navbar-collapse" id="navbarsExampleDefault">
-
-        {% if request.user.is_authenticated %}
-            <div class="form-inline my-2 my-lg-0">
+        <div class="form-inline my-2 my-lg-0">
 
             {% ifequal user.groups.all.0.name "client"%}
                 <a href="{% url 'cart' %}">
@@ -40,23 +28,16 @@
                 </a>
                 <p id="cart-total">{{ cartItems }}</p>
             {% endifequal %}
-            </div>
-                    <ul class="navbar-nav mr-right">
-                        <li class="nav-item">
-                            <a class="nav-link">Logged in as {{ user.username }}</a>
-                        </li>
-                        <form class="form-inline my-2 my-lg-0" action="#" method="POST">
-                            {% csrf_token %}
-                   <a class="btn btn-outline-success my-2 my-sm-0 " href="{% url 'logout' %}">LogOut</a>
-                        </form>
-                    </ul>
+        </div>
 
-        {% else %}
-            <ul class="navbar-nav mr-right">
-                <li class="nav-item">
-                	<a class="btn btn-outline-success my-2 my-sm-0" href="http://127.0.0.1:8000/">Login</a>
-                </li>
-            </ul>
-        {% endif %}
-    </div>
+         </ul>
+
+        <form class="form-inline my-2 my-lg-0" action="#" method="POST">
+            {% csrf_token %}
+            <a class="btn btn-outline-danger my-2 my-sm-0 " href="{% url 'logout' %}">LogOut</a>
+        </form>
+
+
+
+  </div>
 </nav>
