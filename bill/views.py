@@ -142,7 +142,7 @@ class LogoutView(TemplateView):
 
     return render(request, self.template_name)
 
-@allowed_users(allowed_roles=['fournisseur'])
+
 class CategoryCreateView(CreateView):
   model = Category
   template_name = 'bill/create.html'
@@ -151,7 +151,7 @@ class CategoryCreateView(CreateView):
   def get_form(self, form_class=None):
       form = super().get_form(form_class)
       form.helper = FormHelper()
-
+     # messages.success(request, 'successefully added')
       form.helper.add_input(Submit('submit', 'Créer', css_class='btn-primary'))
       form.helper.add_input(Button('cancel', 'Annuler', css_class='btn-secondary', onclick="window.history.back()"))
       return form
@@ -159,7 +159,7 @@ class CategoryCreateView(CreateView):
   def get_success_url(self):
       return f"/category/"
 
-@allowed_users(allowed_roles=['fournisseur'])
+
 class ProductView(SingleTableView):
     template_name = 'bill/list_product.html'
     model = Produit
@@ -172,7 +172,7 @@ class ProductView(SingleTableView):
         context['table'] = table
         return context
 
-@allowed_users(allowed_roles=['fournisseur'])
+
 class ProductDeleteView(DeleteView):
     model = Produit
     template_name = 'bill/delete.html'
@@ -181,7 +181,7 @@ class ProductDeleteView(DeleteView):
     def get_success_url(self):
         return f"/produit/"
 
-@allowed_users(allowed_roles=['fournisseur'])
+
 class ProductCreate(CreateView):
     model = models.Produit
     fields = ["designation", "prix","fournisseur","category","image"]
@@ -211,7 +211,7 @@ class ProductCommandeView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(ProductCommandeView, self).get_context_data(**kwargs)
 
-        table = ProductCommandeTable(Order.objects.filter(status=False))
+        table = ProductCommandeTable(Order.objects.filter(status=False,complete=True))
         RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
         context['table'] = table
         return context
@@ -226,7 +226,7 @@ class FactureView(SingleTableView):
         RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
         context['table'] = table
         return context
-@allowed_users(allowed_roles=['admin'])
+
 
 class ClientDetailView(SingleTableView):
     template_name = 'bill/list.html'
@@ -243,7 +243,7 @@ class ClientDetailView(SingleTableView):
         return context
 
 
-@allowed_users(allowed_roles=['admin'])
+
 
 class ClientDeleteView(DeleteView):
     model = Client
@@ -253,7 +253,6 @@ class ClientDeleteView(DeleteView):
         return f"/clients/"
 
 
-@allowed_users(allowed_roles=['admin'])
 
 class FournisseurView(SingleTableView):
     template_name = 'bill/list.html'
@@ -266,16 +265,14 @@ class FournisseurView(SingleTableView):
         RequestConfig(self.request, paginate={"per_page": 5}).configure(table)
         context['table'] = table
         return context
-@allowed_users(allowed_roles=['admin'])
 
 class FournisseurDeleteView(DeleteView):
     model = Fournisseur
     template_name = 'bill/delete.html'
 
     def get_success_url(self):
-        return f"fournisseur/"
+        return f"/fournisseur/"
 
-@allowed_users(allowed_roles=['admin'])
 
 class CommandeView(SingleTableView):
     template_name = 'bill/list.html'
@@ -307,8 +304,8 @@ def CommandeValider(request,pk):
     order.save()
 
     context = {}
-    return render(request, 'bill/base.html', context)
-@allowed_users(allowed_roles=['admin'])
+    return render(request, 'bill/dashboard.html', context)
+
 
 class DashboardView(TemplateView):
 

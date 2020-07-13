@@ -10,10 +10,9 @@ from bill.models import Client
 
 class RegistrationForm(UserCreationForm):
     email=forms.EmailField()
-    group = forms.ModelChoiceField(queryset=Group.objects.all(),
-                                   required=True)
+
     adresse =forms.CharField(max_length=200)
     tel = forms.CharField(max_length=200)
     class Meta:
         model = User
-        fields = ["username","email","password1","password2","last_name","first_name","adresse","tel","group"]
+        fields = ["username","email","password1","password2","last_name","first_name","adresse","tel"]
